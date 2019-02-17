@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,7 +24,9 @@ public class Robot extends IterativeRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private WPI_TalonSRX leftFrontMotor;
+  private WPI_TalonSRX leftMiddleMotor;
   private WPI_TalonSRX rightFrontMotor;
+  private WPI_TalonSRX rightMiddleMotor;
   private WPI_TalonSRX leftRearMotor;
   private WPI_TalonSRX rightRearMotor;
 
@@ -40,13 +43,22 @@ public class Robot extends IterativeRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    leftFrontMotor = new WPI_TalonSRX(-1);
-    rightFrontMotor = new WPI_TalonSRX(-1);
-    leftRearMotor = new WPI_TalonSRX(-1);
-    rightRearMotor = new WPI_TalonSRX(-1);
+    leftFrontMotor = new WPI_TalonSRX(3);
+    rightFrontMotor = new WPI_TalonSRX(6);
+    leftRearMotor = new WPI_TalonSRX(1);
+    rightRearMotor = new WPI_TalonSRX(4);
+    leftMiddleMotor = new WPI_TalonSRX(2);
+    rightMiddleMotor = new WPI_TalonSRX(5);
 
-    leftMotors = new SpeedControllerGroup(leftFrontMotor, leftRearMotor);
-    rightMotors = new SpeedControllerGroup(rightFrontMotor, rightRearMotor);
+    leftFrontMotor.setInverted(true);
+    leftMiddleMotor.setInverted(true);
+    leftRearMotor.setInverted(true);
+    rightFrontMotor.setInverted(true);
+    rightMiddleMotor.setInverted(true);
+    rightRearMotor.setInverted(true);
+
+    leftMotors = new SpeedControllerGroup(leftFrontMotor, leftRearMotor, leftMiddleMotor);
+    rightMotors = new SpeedControllerGroup(rightFrontMotor, rightRearMotor, rightMiddleMotor);
 
     differentialDrive = new DifferentialDrive(leftMotors, rightMotors);
 
@@ -72,7 +84,10 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void teleopPeriodic() {
-    differentialDrive.tankDrive(joystick.getY(Hand.kLeft), joystick.getY(Hand.kRight));
+    joystick.setXChannel(5);
+    joystick.setYChannel(1);
+    //System.out.println(joystick.getY(Hand.kRight));
+    differentialDrive.tankDrive(joystick.getX(), joystick.getY());
   }
 
   @Override
